@@ -32,9 +32,7 @@ $(document)
             };
 
             itemList.push(itemObj);
-
             renderToDoList();
-
             $('input[name=ListItem]').val('');
         }
 
@@ -46,7 +44,7 @@ $(document)
                 todoList.id = item.id;
                 todoList.class = "";
 
-                todoList.innerHTML = '<input name = "done-todo" type="checkbox" class="done-todo" /><span>' + item.name + '</span>';
+                todoList.innerHTML = '<input name="done-todo" type="checkbox" class="done-todo" /><span>' + item.name + '</span>';
 
                 document.getElementById("list").appendChild(todoList);
             });
@@ -64,21 +62,25 @@ $(document)
         $(document).on('click', 'input[name=done-todo]', function (event) {
             $(this).parent()
                 .toggleClass('checked');
+
+            itemList.find(element => element.id === $(this).parent()[0].id)
+                .complete = $(this)
+                .parent()
+                .hasClass('checked');
         });
 
-        $('#filters li a').on('click', function(){
-            var checked = $("li[class='checked']");
-            var unchecked = $("li[class='']");
+        $('#filters li a').click(function(event){
+            event.preventDefault();
 
             if (this.dataset.filter === "all") {
-                checked.show();
-                unchecked.show();
+                $("li[class='checked']").show();
+                $("li[class='']").show();
             } else if (this.dataset.filter === "active") {
-                checked.hide();
-                unchecked.show();
+                $("li[class='checked']").hide();
+                $("li[class='']").show();
             } else if (this.dataset.filter === "complete") {
-                checked.show();
-                unchecked.hide();
+                $("li[class='checked']").show();
+                $("li[class='']").hide();
             }
         });
 
@@ -88,19 +90,16 @@ $(document)
                 .attr('contentEditable', 'true')
                 .focus()
                 .keypress(function (event) {
-                    var keycode = (event.keyCode
-                        ? event.keyCode
-                        : event.which);
-                    if (keycode === '13') {
+                    var keycode = (event.keyCode ? event.keyCode : event.which);
+                    if (keycode == '13') {
                         event.target.blur();
 
                         $(this).children('span')
                             .attr('contenteditable', 'false');
 
-                        todoList.find(element => element.id === $(this).parent()[0].id)
-                            .name = $(this).text();
+                        itemList.find(element => element.id === $(this).parent()[0].id).name = $(this).text();
 
-                        renderTodoList();
+                        renderToDoList();
                     }
                 });
         });
